@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Instagram</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #fff;
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .app {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    position: relative;
+  }
+
+  /* STATUS BAR */
+  .status-bar {
+    background: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 18px 4px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #111;
+    flex-shrink: 0;
+  }
+
+  .status-icons { display: flex; gap: 5px; align-items: center; }
+
+  /* IG HEADER */
+  .ig-header {
+    background: #fff;
+    border-bottom: 0.5px solid #dbdbdb;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .ig-logo {
+    font-size: 26px;
+    font-weight: 800;
+    font-style: italic;
+    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
+  }
+
+  .ig-header-icons { display: flex; gap: 18px; align-items: center; }
+  .ig-header-icons i { font-size: 26px; color: #111; }
+
+  /* FEED */
+  .feed {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    padding-bottom: 70px;
+  }
+
+  /* STORIES */
+  .stories-bar {
+    display: flex;
+    gap: 14px;
+    padding: 12px 14px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    border-bottom: 0.5px solid #dbdbdb;
+    background: #fff;
+  }
+  .stories-bar::-webkit-scrollbar { display: none; }
+
+  .story-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    min-width: 66px;
+  }
+
+  .story-ring {
+    width: 62px; height: 62px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    padding: 2.5px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .story-ring.seen { background: #c7c7c7; }
+
+  .story-avatar {
+    width: 55px; height: 55px;
+    border-radius: 50%;
+    border: 2.5px solid #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    color: #fff;
+  }
+
+  .story-name { font-size: 11px; color: #111; text-align: center; max-width: 66px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* POST */
+  .post { background: #fff; border-bottom: 0.5px solid #dbdbdb; }
+
+  .post-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 14px;
+    gap: 10px;
+  }
+
+  .avatar-wrap {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    padding: 2px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .avatar-inner {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800; color: #fff;
+  }
+
+  .post-user-info { flex: 1; }
+  .post-username { font-size: 13.5px; font-weight: 700; color: #111; }
+  .post-location { font-size: 11px; color: #8e8e8e; }
+  .post-more { font-size: 22px; color: #111; padding: 4px; }
+
+  .post-img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 80px;
+  }
+
+  .post-actions {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px 6px;
+    gap: 16px;
+  }
+  .post-actions i { font-size: 26px; color: #111; }
+  .post-actions .liked { color: #e0245e; }
+  .save-icon { margin-left: auto; }
+
+  .post-likes { padding: 2px 14px; font-size: 13.5px; font-weight: 700; color: #111; }
+  .post-caption { padding: 4px 14px; font-size: 13.5px; color: #111; line-height: 1.45; }
+  .post-caption strong { font-weight: 800; }
+  .post-comments { padding: 4px 14px 2px; font-size: 13px; color: #8e8e8e; }
+  .post-time { padding: 2px 14px 12px; font-size: 11px; color: #8e8e8e; text-transform: uppercase; letter-spacing: 0.3px; }
+
+  .verified { color: #0095f6; font-size: 13px; }
+
+  /* SCAM ELEMENTS */
+
+
+  /* PRIZE BANNER */
+  .prize-banner {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 70%, #533483 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .prize-crown { font-size: 54px; line-height: 1; }
+  .prize-title { font-size: 22px; font-weight: 800; color: #ffd700; font-style: italic; }
+  .prize-selected { font-size: 13px; color: #e0e0e0; }
+  .prize-label { font-size: 15px; color: #ffd700; font-weight: 800; }
+  .prize-amount { font-size: 38px; font-weight: 800; color: #00ff88; }
+  .prize-sublabel { font-size: 12px; color: #aaa; }
+  .prize-cta {
+    margin-top: 10px;
+    background: linear-gradient(90deg, #ffd700, #ff8c00);
+    color: #000;
+    font-weight: 800;
+    font-size: 15px;
+    padding: 12px 32px;
+    border-radius: 30px;
+    cursor: pointer;
+    border: none;
+    font-family: 'Nunito', sans-serif;
+    animation: btn-pulse 1.2s infinite alternate;
+  }
+  @keyframes btn-pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.05); }
+  }
+
+  /* LINK SCAM */
+  .link-post-img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: linear-gradient(135deg, #0d0d0d 0%, #1a0a2e 50%, #0d1b2a 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 24px;
+    text-align: center;
+  }
+  .link-title { font-size: 20px; font-weight: 800; color: #ff4444; }
+  .link-sub { font-size: 12px; color: #ccc; }
+  .link-timer { font-size: 34px; font-weight: 800; color: #ffd700; font-variant-numeric: tabular-nums; }
+  .link-url-box {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    padding: 10px 14px;
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .link-url-text { font-size: 11px; color: #6cf; word-break: break-all; text-align: left; line-height: 1.5; }
+
+  /* GCASH SCAM */
+  .gcash-banner {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: linear-gradient(135deg, #0d47a1, #1565c0, #1976d2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 24px;
+    text-align: center;
+  }
+  .gcash-code-box {
+    background: rgba(255,255,255,0.12);
+    border-radius: 12px;
+    padding: 14px 20px;
+    width: 100%;
+  }
+  .gcash-cta {
+    margin-top: 4px;
+    background: #00c853;
+    color: #fff;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 30px;
+    font-weight: 800;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  /* BOTTOM NAV */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0; right: 0;
+    background: #fff;
+    border-top: 0.5px solid #dbdbdb;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 0 env(safe-area-inset-bottom, 10px);
+    z-index: 50;
+  }
+  .bottom-nav i { font-size: 26px; color: #111; padding: 6px; }
+
+
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="status-bar">
+    <span id="clock">9:41</span>
+    <div class="status-icons">
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#111"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#111"/><rect x="9" y="0" width="3" height="12" rx="1" fill="#111"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="#111" opacity="0.3"/></svg>
+      <svg width="16" height="12" viewBox="0 0 20 14" fill="none"><path d="M10 3C12.8 3 15.3 4.2 17.1 6.1L18.5 4.7C16.3 2.4 13.3 1 10 1C6.7 1 3.7 2.4 1.5 4.7L2.9 6.1C4.7 4.2 7.2 3 10 3Z" fill="#111"/><path d="M10 7C11.8 7 13.4 7.7 14.6 8.9L16 7.5C14.4 5.9 12.3 5 10 5C7.7 5 5.6 5.9 4 7.5L5.4 8.9C6.6 7.7 8.2 7 10 7Z" fill="#111"/><circle cx="10" cy="12" r="2" fill="#111"/></svg>
+      <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="0" y="1" width="20" height="10" rx="2" stroke="#111" stroke-width="1"/><rect x="21" y="3.5" width="2" height="5" rx="1" fill="#111"/><rect x="1.5" y="2.5" width="14" height="7" rx="1" fill="#111"/></svg>
+    </div>
+  </div>
+
+  <div class="ig-header">
+    <span class="ig-logo">Instagram</span>
+    <div class="ig-header-icons">
+      <i class="ti ti-heart"></i>
+      <i class="ti ti-message-circle-2"></i>
+    </div>
+  </div>
+
+  <div class="feed" id="feed">
+
+    <!-- Stories -->
+    <div class="stories-bar">
+      <div class="story-item">
+        <div class="story-ring">
+          <div class="story-avatar" style="background:#833ab4;">YO</div>
+        </div>
+        <span class="story-name">Your story</span>
+      </div>
+      <div class="story-item">
+        <div class="story-ring">
+          <div class="story-avatar" style="background:#0095f6;">JM</div>
+        </div>
+        <span class="story-name">jake_m</span>
+      </div>
+      <div class="story-item">
+        <div class="story-ring seen">
+          <div class="story-avatar" style="background:#e1306c;">SL</div>
+        </div>
+        <span class="story-name">sara.luz</span>
+      </div>
+      <div class="story-item">
+        <div class="story-ring">
+          <div class="story-avatar" style="background:#fd5949;">TK</div>
+        </div>
+        <span class="story-name">trekker99</span>
+      </div>
+      <div class="story-item">
+        <div class="story-ring seen">
+          <div class="story-avatar" style="background:#3db849;">MR</div>
+        </div>
+        <span class="story-name">mia.reads</span>
+      </div>
+      <div class="story-item">
+        <div class="story-ring">
+          <div class="story-avatar" style="background:#6c63ff;">AL</div>
+        </div>
+        <span class="story-name">alex.leo</span>
+      </div>
+    </div>
+
+    <!-- POST 1: Normal -->
+    <div class="post">
+      <div class="post-header">
+        <div class="avatar-wrap">
+          <div class="avatar-inner" style="background:#fd5949;">JM</div>
+        </div>
+        <div class="post-user-info">
+          <div class="post-username">jake_m <span class="verified">✓</span></div>
+          <div class="post-location">Manila, Philippines</div>
+        </div>
+        <span class="post-more">···</span>
+      </div>
+      <div class="post-img" style="background:linear-gradient(135deg,#667eea,#764ba2);">🌅</div>
+      <div class="post-actions">
+        <i class="ti ti-heart"></i>
+        <i class="ti ti-message-circle"></i>
+        <i class="ti ti-send"></i>
+        <i class="ti ti-bookmark save-icon"></i>
+      </div>
+      <div class="post-likes">3,421 likes</div>
+      <div class="post-caption"><strong>jake_m</strong> Spent the whole day at Rizal Park. Nothing beats Manila's skyline at dusk 🌇 #Manila #Sunset</div>
+      <div class="post-comments">View all 84 comments</div>
+      <div class="post-time">2 hours ago</div>
+    </div>
+
+    <!-- POST 2: Normal -->
+    <div class="post">
+      <div class="post-header">
+        <div class="avatar-wrap">
+          <div class="avatar-inner" style="background:#3db849;">MR</div>
+        </div>
+        <div class="post-user-info">
+          <div class="post-username">mia.reads</div>
+          <div class="post-location">Makati City</div>
+        </div>
+        <span class="post-more">···</span>
+      </div>
+      <div class="post-img" style="background:linear-gradient(135deg,#f093fb,#f5576c);">📚</div>
+      <div class="post-actions">
+        <i class="ti ti-heart liked"></i>
+        <i class="ti ti-message-circle"></i>
+        <i class="ti ti-send"></i>
+        <i class="ti ti-bookmark save-icon"></i>
+      </div>
+      <div class="post-likes">912 likes</div>
+      <div class="post-caption"><strong>mia.reads</strong> Currently obsessed with this new novel 📖 Weekend reading vibes — who else is a bookworm? 🐛✨</div>
+      <div class="post-comments">View all 22 comments</div>
+      <div class="post-time">5 hours ago</div>
+    </div>
+
+    <!-- SCAM POST 1: Fake Prize -->
+    <div class="post">
+      <div class="post-header">
+        <div class="avatar-wrap" style="background:linear-gradient(45deg,#ffd700,#ff8c00);">
+          <div class="avatar-inner" style="background:linear-gradient(135deg,#ffd700,#ff8c00);color:#333;">🎁</div>
+        </div>
+        <div class="post-user-info">
+          <div class="post-username">Meta_Officiai_PH <span style="font-size:11px;color:#8e8e8e;">(Official)</span></div>
+          <div class="post-location">Facebook Meta Global</div>
+        </div>
+        <span class="post-more">···</span>
+      </div>
+      <div class="prize-banner">
+        <div class="prize-crown">👑</div>
+        <div class="prize-title">🎉 CONGRATULATIONS! 🎉</div>
+        <div class="prize-selected">You have been selected as our</div>
+        <div class="prize-label">10,000,000th USER!</div>
+        <div class="prize-amount">₱50,000</div>
+        <div class="prize-sublabel">Cash Prize — Claim NOW!</div>
+        <button class="prize-cta">CLAIM YOUR PRIZE →</button>
+      </div>
+
+      <div class="post-actions">
+        <i class="ti ti-heart"></i>
+        <i class="ti ti-message-circle"></i>
+        <i class="ti ti-send"></i>
+        <i class="ti ti-bookmark save-icon"></i>
+      </div>
+      <div class="post-likes">147,803 likes</div>
+      <div class="post-caption"><strong>Meta_Officiai_PH</strong> 🚨 LIMITED TIME! Send your full name, address &amp; bank account number to receive your prize! Link in bio! 💰💰 #Winner #GiveAway</div>
+      <div class="post-time">Just now</div>
+    </div>
+
+    <!-- POST 3: Normal -->
+    <div class="post">
+      <div class="post-header">
+        <div class="avatar-wrap">
+          <div class="avatar-inner" style="background:#0095f6;">TK</div>
+        </div>
+        <div class="post-user-info">
+          <div class="post-username">trekker99</div>
+          <div class="post-location">Baguio City</div>
+        </div>
+        <span class="post-more">···</span>
+      </div>
+      <div class="post-img" style="background:linear-gradient(135deg,#4facfe,#00f2fe);">⛰️</div>
+      <div class="post-actions">
+        <i class="ti ti-heart"></i>
+        <i class="ti ti-message-circle"></i>
+        <i class="ti ti-send"></i>
+        <i class="ti ti-bookmark save-icon"></i>
+      </div>
+      <div class="post-likes">5,618 likes</div>
+      <div class="post-caption"><strong>trekker99</strong> Cool breeze, pine trees, and good vibes only ⛰️ Finally made it to the summit! #Baguio #Hiking #NatureLovers</div>
+      <div class="post-comments">View all 113 comments</div>
+      <div class="post-time">Yesterday</div>
+    </div>
+
+    <!-- SCAM POST 2: Fake Suspension Link -->
+    <div class="post">
+      <div class="post-header">
+        <div class="avatar-wrap" style="background:linear-gradient(45deg,#ff4444,#cc0000);">
+          <div class="avatar-inner" style="background:#ff4444;font-size:18px;">!</div>
+        </div>
+        <div class="post-user-info">
+          <div class="post-username">lnstagram.security_alert</div>
+          <div class="post-location">⚠️ Account Verification Required</div>
+        </div>
+        <span class="post-more">···</span>
+      </div>
+      <div class="link-post-img">
+        <i class="ti ti-shield-x" style="font-size:52px;color:#ff4444;"></i>
+        <div class="link-title">🔴 ACCOUNT SUSPENDED</div>
+        <div class="link-sub">Your account will be permanently deleted in:</div>
+        <div class="link-timer" id="timer">23:59:57</div>
+        <div style="font-size:11px;color:#aaa;margin-bottom:4px;">Click below to verify your identity immediately</div>
+        <div class="link-url-box">
+          <i class="ti ti-link" style="font-size:18px;color:#6cf;flex-shrink:0;margin-top:2px;"></i>
+          <div class="link-url-text">http://lnstagram-secure-verify.xyz/account/ph/login?ref=suspension_notice&token=xK9mQ2pL</div>
+        </div>
+      </div>
+
+      <div class="post-actions">
+        <i class="ti ti-heart"></i>
+        <i class="ti ti-message-circle"></i>
+        <i class="ti ti-send"></i>
+        <i class="ti ti-bookmark save-icon"></i>
+      </div>
+      <div class="post-caption"><strong>lnstagram.security_alert</strong> ⚠️ URGENT: Your account has been flagged for unusual activity. Verify NOW or lose access forever! Click link in bio!</div>
+      <div class="post-time">Just now</div>
+    </div>
+
+    <!-- POST 4: Normal -->
+    <div class="post">
+      <div class="post-header">
+        <div class="avatar-wrap">
+          <div class="avatar-inner" style="background:#e1306c;">SL</div>
+        </div>
+        <div class="post-user-info">
+          <div class="post-username">sara.luz</div>
+          <div class="post-location">Cebu City</div>
+        </div>
+        <span class="post-more">···</span>
+      </div>
+      <div class="post-img" style="background:linear-gradient(135deg,#fa709a,#fee140);">🍜</div>
+      <div class="post-actions">
+        <i class="ti ti-heart liked"></i>
+        <i class="ti ti-message-circle"></i>
+        <i class="ti ti-send"></i>
+        <i class="ti ti-bookmark save-icon"></i>
+      </div>
+      <div class="post-likes">2,041 likes</div>
+      <div class="post-caption"><strong>sara.luz</strong> Sunday brunch hits different when it's homemade 🍜😍 Mom's recipe forever 🤌 #FoodPH #HomeCooking</div>
+      <div class="post-comments">View all 56 comments</div>
+      <div class="post-time">3 hours ago</div>
+    </div>
+
+    <!-- SCAM POST 3: Fake GCash -->
+    <div class="post">
+      <div class="post-header">
+        <div class="avatar-wrap" style="background:linear-gradient(45deg,#0d47a1,#1976d2);">
+          <div class="avatar-inner" style="background:#1565c0;font-size:16px;font-weight:800;">G</div>
+        </div>
+        <div class="post-user-info">
+          <div class="post-username">GCash.Officiai.Rewards</div>
+          <div class="post-location">GCash Philippines</div>
+        </div>
+        <span class="post-more">···</span>
+      </div>
+      <div class="gcash-banner">
+        <div style="font-size:52px;">📱</div>
+        <div style="font-size:20px;font-weight:800;color:#ffd700;">GCash Surprise Reward!</div>
+        <div style="font-size:13px;color:#bbdefb;">You've won a FREE ₱5,000 GCash load!</div>
+        <div class="gcash-code-box">
+          <div style="font-size:11px;color:#90caf9;margin-bottom:6px;">Claim code (expires in 15 mins):</div>
+          <div style="font-size:20px;font-weight:800;color:#fff;letter-spacing:4px;">GC-77821-PH</div>
+        </div>
+        <button class="gcash-cta">Redeem Now →</button>
+      </div>
+
+      <div class="post-actions">
+        <i class="ti ti-heart"></i>
+        <i class="ti ti-message-circle"></i>
+        <i class="ti ti-send"></i>
+        <i class="ti ti-bookmark save-icon"></i>
+      </div>
+      <div class="post-likes">89,120 likes</div>
+      <div class="post-caption"><strong>GCash.Officiai.Rewards</strong> 🎁 SURPRISE GIVEAWAY! First 500 to DM us your GCash number gets FREE ₱5,000 load! Share to unlock! 💸 #GCash #FreeLoad</div>
+      <div class="post-time">Just now</div>
+    </div>
+
+    <!-- POST 5: Normal -->
+    <div class="post">
+      <div class="post-header">
+        <div class="avatar-wrap">
+          <div class="avatar-inner" style="background:#6c63ff;">JM</div>
+        </div>
+        <div class="post-user-info">
+          <div class="post-username">jake_m <span class="verified">✓</span></div>
+        </div>
+        <span class="post-more">···</span>
+      </div>
+      <div class="post-img" style="background:linear-gradient(135deg,#43e97b,#38f9d7);">🏋️</div>
+      <div class="post-actions">
+        <i class="ti ti-heart"></i>
+        <i class="ti ti-message-circle"></i>
+        <i class="ti ti-send"></i>
+        <i class="ti ti-bookmark save-icon"></i>
+      </div>
+      <div class="post-likes">1,772 likes</div>
+      <div class="post-caption"><strong>jake_m</strong> Gym grind never stops 💪 Leg day was brutal but worth it. Progress not perfection! #FitLife #GymPH</div>
+      <div class="post-comments">View all 38 comments</div>
+      <div class="post-time">1 day ago</div>
+    </div>
+
+  </div><!-- end feed -->
+
+  <div class="bottom-nav">
+    <i class="ti ti-home"></i>
+    <i class="ti ti-search"></i>
+    <i class="ti ti-circle-plus"></i>
+    <i class="ti ti-movie"></i>
+    <i class="ti ti-user-circle"></i>
+  </div>
+
+
+
+</div><!-- end app -->
+
+<script>
+  // Live clock
+  function updateClock() {
+    const now = new Date();
+    let h = now.getHours(), m = now.getMinutes();
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    document.getElementById('clock').textContent = h + ':' + String(m).padStart(2,'0') + ' ' + ampm;
+  }
+  updateClock();
+  setInterval(updateClock, 10000);
+
+  // Countdown timer
+  let secs = 86397;
+  function updateTimer() {
+    secs = Math.max(0, secs - 1);
+    const h = String(Math.floor(secs/3600)).padStart(2,'0');
+    const m = String(Math.floor((secs%3600)/60)).padStart(2,'0');
+    const s = String(secs%60).padStart(2,'0');
+    const el = document.getElementById('timer');
+    if (el) el.textContent = h + ':' + m + ':' + s;
+  }
+  setInterval(updateTimer, 1000);
+
+
+</script>
+</body>
+</html>
